@@ -5,26 +5,23 @@ curl http://localhost:3000/account | jq
 
 // ticker (MULTI)
 curl http://localhost:3000/price/BTC | jq
+curl http://localhost:3000/price/ETH | jq
+...
 
 // buy (MULTI)
 curl -X POST http://localhost:3000/order/buy \
   -H "Content-Type: application/json" \
-  -d '{"market":"KRW-BTC", "price":144374000, "percent":100}' | jq
-
-curl -X POST http://localhost:3000/order/buy \
-  -H "Content-Type: application/json" \
-  -d '{"market":"KRW-BTC", "volume":0.001, "price":84000000}' | jq
+  -d '{"market":"KRW-BTC", "ord_type":"price", "percent":100}' | jq
 
 // sell (MULTI)
 curl -X POST http://localhost:3000/order/sell \
   -H "Content-Type: application/json" \
-  -d '{"market":"KRW-BTC", "price":144374000, "percent":100}' | jq
-
-curl -X POST http://localhost:3000/order/sell \
-  -H "Content-Type: application/json" \
-  -d '{"market":"KRW-BTC", "volume":0.001, "price":85000000}' | jq
+  -d '{"market":"KRW-BTC", "ord_type":"price", "percent":100}' | jq
 
 === STRATEGY ===
+// rsi
 curl "http://localhost:3000/strategy/rsi?market=ETH_KRW" 
 curl "http://localhost:3000/strategy/rsi?unit=10m&count=20" 
+
+// bband
 curl "http://localhost:3000/strategy/bbands?market=BTC_KRW&unit=1m&count=20&stddev=2"

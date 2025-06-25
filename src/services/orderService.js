@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const querystring = require('querystring');
 const axios = require('axios');
 const { getAccount } = require('./accountService');
+// const { getCurrentPrice } = require('./priceService');
 
 const { BITHUMB_ACCESS_KEY: accessKey, BITHUMB_SECRET_KEY: secretKey, BITHUMB_API_URL: apiUrl } = process.env;
 
@@ -24,20 +25,22 @@ function generateJWT(requestBody) {
   return jwt.sign(payload, secretKey);
 }
 
-async function placeBuyOrder({ market, volume, price, percent }) {
+async function placeBuyOrder({ market, ord_type, volume, percent }) {
+  let price = 0
+
   if (percent) {
     const account = await getAccount();
     const krwBalance = parseFloat(account.find(a => a.currency === 'KRW')?.balance || 0);
-    const usedKRW = krwBalance * (percent / 100) * 0.997;
-    volume = (usedKRW / price).toFixed(8);
+    const usedKRW = Math.floor(krwBalance * (percent / 100) * 0.997);
+    price = usedKRW
   }
 
   const requestBody = {
-    market,
+    market: market,
     side: 'bid',
-    volume,
-    price,
-    ord_type: 'limit'
+    ...(ord_type == 'price' ? {} : { volue: '0' }),
+    price: price,
+    ord_type,
   };
 
   const jwtToken = generateJWT(requestBody);
@@ -47,25 +50,25 @@ async function placeBuyOrder({ market, volume, price, percent }) {
       'Content-Type': 'application/json'
     }
   };
-  console.log(requestBody)
+
   const res = await axios.post(`${apiUrl}/v1/orders`, requestBody, config);
   return res.data;
 }
 
-async function placeSellOrder({ market, volume, price, percent }) {
+// async function placeSellOrder({ market, volume, price, percent }) {
+async function placeSellOrder ({ market, ord_type, volume, percent }) {
   if (percent) {
     const account = await getAccount();
     const coin = market.split('-')[1];
     const coinBalance = parseFloat(account.find(a => a.currency === coin)?.balance || 0);
-    volume = coinBalance.toFixed(8);
+    volume = coinBalance;
   }
 
   const requestBody = {
     market,
     side: 'ask',
     volume,
-    price,
-    ord_type: 'limit'
+    ord_type: 'market'
   };
 
   const jwtToken = generateJWT(requestBody);

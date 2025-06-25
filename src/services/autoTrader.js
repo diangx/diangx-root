@@ -33,7 +33,6 @@ async function runAutoTrade() {
 
         const market = 'BTC_KRW';
         const price = await getCurrentPrice(market);  // 현재가 불러오기
-        console.log(price)
     
         const allBuy = signals.length > 0 && signals.every(s => s === 'buy');
         const allSell = signals.length > 0 && signals.every(s => s === 'sell');
@@ -41,13 +40,13 @@ async function runAutoTrade() {
         if (allBuy) {
             await placeBuyOrder({
                 market: 'KRW-BTC',
-                price: 84000000,
+                ord_type: 'price',
                 percent: 100
             });
         } else if (allSell) {
             await placeSellOrder({
                 market: 'KRW-BTC',
-                price: 85000000,
+                ord_type: 'market',
                 percent: 100
             });
         }
