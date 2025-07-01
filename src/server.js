@@ -18,4 +18,4 @@ app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
-setInterval(runAutoTrade, 60 * 50);// 60 * 1000 = 1 MINUTE
+setInterval(runAutoTrade, 60 * 1000);// 60 * 1000 = 1 MINUTE
