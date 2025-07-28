@@ -37,7 +37,7 @@ async function runAutoTrade() {
         const allBuy = signals.length > 0 && signals.every(s => s === 'buy');
         const allSell = signals.length > 0 && signals.every(s => s === 'sell');
     
-        if (allBuy) {
+        if (!allSell) {
             await placeBuyOrder({
                 market: 'KRW-BTC',
                 ord_type: 'price',
